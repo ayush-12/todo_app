@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubit/auth/firebase_auth.cubit.dart';
+import 'package:todo_app/cubit/home/home_cubit.dart';
+import 'package:todo_app/cubit/theme/theme.cubit.dart';
 import 'package:todo_app/cubit/todo/todo_cubit.dart';
 
 import 'cubit/user/user_cubit.dart';
@@ -23,12 +25,19 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => FirebaseAuthCubit()),
         BlocProvider(create: (_) => UserCubit()),
         BlocProvider(create: (_) => TodoCubit()),
+        BlocProvider(create: (_) => HomeCubit()),
+        BlocProvider(create: (_) => ThemeCubit())
       ],
-      child: CupertinoApp(
-        theme: const CupertinoThemeData(),
-        initialRoute: '/',
-        routes: appRoutes,
-      ),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (context, theme) {
+        return CupertinoApp(
+          theme: CupertinoThemeData(
+            brightness:
+                theme == ThemeMode.dark ? Brightness.dark : Brightness.light,
+          ),
+          initialRoute: '/',
+          routes: appRoutes,
+        );
+      }),
     );
   }
 }

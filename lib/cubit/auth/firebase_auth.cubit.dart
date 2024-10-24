@@ -51,8 +51,14 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
   }
 
   void logout() async {
-    await _auth.signOut();
-    emit(AuthInitial()); // Return to phone input state after logout
+    try {
+      await FirebaseAuth.instance.signOut();
+      //await _auth.signOut();
+
+      emit(AuthInitial()); // Return to phone input state after logout
+    } catch (e) {
+      ///TODO handle error
+    }
   }
 
   Future<void> checkUserExists(String uid) async {
