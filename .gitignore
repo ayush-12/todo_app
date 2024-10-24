@@ -25,3 +25,7 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Firebase configuration files
+google-services.json
+GoogleService-Info.plist
