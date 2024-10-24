@@ -6,17 +6,22 @@ import 'package:intl/intl.dart';
 import '../models/todo/todo_item.dart';
 
 class AddTodoDialog extends StatefulWidget {
-  final Function(Todo) onAdd;
+  const AddTodoDialog({
+    Key? key,
+    required this.onAdd,
+    this.initialTodo,
+  }) : super(key: key);
 
-  const AddTodoDialog({Key? key, required this.onAdd}) : super(key: key);
+  final Todo? initialTodo; // Optional initial todo for editing
+  final Function(Todo) onAdd;
 
   @override
   State<AddTodoDialog> createState() => _AddTodoDialogState();
 }
 
 class _AddTodoDialogState extends State<AddTodoDialog> {
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
   Priority _selectedPriority = Priority.low;
   DateTime? _dueDate;
 
@@ -28,6 +33,18 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
     _descriptionController.dispose();
     _tagController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers and fields with existing todo data if available
+    _titleController =
+        TextEditingController(text: widget.initialTodo?.title ?? '');
+    _descriptionController =
+        TextEditingController(text: widget.initialTodo?.description ?? '');
+    _selectedPriority = widget.initialTodo?.priority ?? Priority.low;
+    _dueDate = widget.initialTodo?.dueDate;
   }
 
   // Method to pick a due date
@@ -69,7 +86,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
     }
 
     final newTodo = Todo(
-      id: Random().toString(),
+      id: widget.initialTodo?.id ?? '',
       title: _titleController.text,
       description: _descriptionController.text,
       priority: _selectedPriority,

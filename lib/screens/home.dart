@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubit/todo/todo_cubit.dart';
 import 'package:todo_app/cubit/todo/todo_states.dart';
@@ -50,7 +49,17 @@ class HomeScreen extends StatelessWidget {
                     onDelete: () {
                       context.read<TodoCubit>().deleteTodo(todos[index].id);
                     },
-                    onEdit: () {},
+                    onEdit: () {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) => AddTodoDialog(
+                          initialTodo: todos[index],
+                          onAdd: (updatedTodo) {
+                            context.read<TodoCubit>().updateTodo(updatedTodo);
+                          },
+                        ),
+                      );
+                    },
                   ),
                 );
               },
