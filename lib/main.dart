@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/cubit/auth/firebase_auth.cubit.dart';
+import 'package:todo_app/cubit/todo/todo_cubit.dart';
 
-import 'cubit/auth/firebase_auth.cubit.dart';
 import 'cubit/user/user_cubit.dart';
 import 'routes.dart';
 
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => FirebaseAuthCubit()),
-        BlocProvider(create: (_) => UserCubit())
+        BlocProvider(create: (_) => UserCubit()),
+        BlocProvider(create: (_) => TodoCubit()),
       ],
       child: CupertinoApp(
         theme: const CupertinoThemeData(),

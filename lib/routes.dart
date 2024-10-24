@@ -7,5 +7,5 @@ import 'screens/login.dart';
 final Map<String, WidgetBuilder> appRoutes = {
   '/': (context) => LoginScreen(),
   '/createAccount': (context) => const CreateUserScreen(),
-  '/home': (context) => const HomeScreen()
+  '/home': (context) => HomeScreen()
 };

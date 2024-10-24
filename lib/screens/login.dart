@@ -188,7 +188,7 @@ class _LoginWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.width - 100,
+          width: MediaQuery.of(context).size.width - 60,
           child: Center(
             child: CupertinoTextField(
               controller: phoneNumberController,
