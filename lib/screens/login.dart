@@ -69,7 +69,6 @@ class _OtpInputWidget extends StatefulWidget {
 }
 
 class _OtpInputWidgetState extends State<_OtpInputWidget> {
-  //final TextEditingController otpTextController = TextEditingController();
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   final List<TextEditingController> _controllers =
       List.generate(6, (index) => TextEditingController());
@@ -83,10 +82,12 @@ class _OtpInputWidgetState extends State<_OtpInputWidget> {
         Stack(
           alignment: Alignment.center,
           children: [
-            const Center(
+            Center(
               child: SizedBox(
                 height: 50,
-                child: Center(child: Text('9859894589')),
+                child: Center(
+                  child: Text(widget.phoneNumber),
+                ),
               ),
             ),
             Positioned(
