@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'auth_states.dart';
 
-
-
 class FirebaseAuthCubit extends Cubit<AuthState> {
   FirebaseAuthCubit() : super(AuthInitial());
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -13,25 +11,26 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
     emit(AuthSendingOtpState());
 
     await _auth.verifyPhoneNumber(
-      phoneNumber: number,
+      phoneNumber: '+91 $number',
       verificationCompleted: (PhoneAuthCredential credential) async {
         await _auth.signInWithCredential(credential);
         emit(AuthSuccessState());
       },
       verificationFailed: (FirebaseAuthException e) {
-        emit(AuthFailureState(failureMessage: e.message ?? 'Verification failed.'));
+        emit(AuthFailureState(
+            failureMessage: e.message ?? 'Verification failed.'));
       },
       codeSent: (String verificationId, int? resendToken) {
-        
         emit(OtpInputState(verificationId: verificationId));
       },
       codeAutoRetrievalTimeout: (String verificationId) {
-        //TODO: handle this 
+        //TODO: handle this
       },
     );
   }
 
-  Future<void> verifyOTP({required String verificationId, required String otp}) async {
+  Future<void> verifyOTP(
+      {required String verificationId, required String otp}) async {
     try {
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
@@ -43,6 +42,10 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
       print('EXCEPTION $e');
       emit(OtpFailureState(failureMessage: 'Invalid OTP'));
     }
+  }
+
+  editPhoneNumber() {
+    emit(AuthInitial());
   }
 
   void logout() async {

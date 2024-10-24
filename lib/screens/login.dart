@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubit/firebase_auth.cubit.dart';
+import 'package:todo_app/widgets/todo_loader.dart';
 
 import '../cubit/auth_states.dart';
 
@@ -8,7 +10,6 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController optController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,77 +21,198 @@ class LoginScreen extends StatelessWidget {
           if (state is AuthSuccessState) {
             Navigator.pushReplacementNamed(context, '/home');
           }
+          if (state is OtpFailureState) {
+            ///TODO handle error
+            ///
+          }
+          if (state is AuthFailureState) {}
+        }, buildWhen: (previous, current) {
+          return current is AuthInitial ||
+              current is OtpInputState ||
+              current is AuthSendingOtpState ||
+              current is OtpVerifyingState;
         }, builder: (context, state) {
-          if (state is AuthInitial || state is AuthSendingOtpState) {
-            return Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                     CupertinoTextField(
-                      controller: phoneNumberController,
-                      placeholder: 'Enter mobile number',
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 16),
-                    CupertinoButton(
-                      onPressed: () {
-                        context
-                            .read<FirebaseAuthCubit>()
-                            .loginWithPhone('+919876543210');
-                      },
-                      child: const Text('Login'),
-                    ),
-                  ],
+          return Stack(
+            children: [
+              if (state is AuthInitial)
+                Center(
+                    child: _LoginWidget(
+                        phoneNumberController: phoneNumberController)),
+              if (state is OtpInputState)
+                Center(
+                  child: _OtpInputWidget(
+                    phoneNumber: phoneNumberController.text,
+                    verificationId: state.verificationId,
+                  ),
                 ),
-                if (state is AuthSendingOtpState)
-                  const Center(child: CupertinoActivityIndicator()),
-              ],
-            );
-          }
-
-          if (state is OtpInputState || state is OtpVerifyingState) {
-            return Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ///TODO add number text field here with edit option
-                     CupertinoTextField(
-                      controller: optController ,
-                      keyboardType: TextInputType.number,
-                      placeholder: 'Enter OTP',
-                    ),
-                    const SizedBox(height: 16),
-                    CupertinoButton(
-                      onPressed: () {
-                        context
-                            .read<FirebaseAuthCubit>()
-                            .verifyOTP(verificationId: (state as OtpInputState).verificationId, otp:'123456',);
-                      },
-                      child: const Text('Verify'),
-                    ),
-                  ],
-                ),
-                if (state is OtpVerifyingState)
-                  const Center(child: CupertinoActivityIndicator()),
-              ],
-            );
-          }
-
-          if (state is AuthFailureState || state is OtpFailureState) {
-            return const Text(
-              'Failure message',
-            );
-
-            /// TODO: update this later
-          }
-
-          ///TODO: update this
-          return const SizedBox.shrink();
+              if (state is AuthSendingOtpState || state is OtpVerifyingState)
+                const Center(child: TodoLoader())
+            ],
+          );
         }),
       ),
+    );
+  }
+}
+
+class _OtpInputWidget extends StatefulWidget {
+  const _OtpInputWidget({
+    required this.phoneNumber,
+    required this.verificationId,
+  });
+
+  final String phoneNumber;
+  final String verificationId;
+
+  @override
+  State<_OtpInputWidget> createState() => _OtpInputWidgetState();
+}
+
+class _OtpInputWidgetState extends State<_OtpInputWidget> {
+  //final TextEditingController otpTextController = TextEditingController();
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+  final List<TextEditingController> _controllers =
+      List.generate(6, (index) => TextEditingController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Otp has been sent to'),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            const Center(
+              child: SizedBox(
+                height: 50,
+                child: Center(child: Text('9859894589')),
+              ),
+            ),
+            Positioned(
+              right: 80,
+              child: SizedBox(
+                height: 50,
+                child: CupertinoButton(
+                  onPressed: () =>
+                      context.read<FirebaseAuthCubit>().editPhoneNumber(),
+                  child: const Icon(
+                    CupertinoIcons.pen,
+                    size: 20.0,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(
+            6,
+            (index) {
+              return SizedBox(
+                width: 40,
+                child: CupertinoTextField(
+                  controller: _controllers[index],
+                  focusNode: _focusNodes[index],
+                  textAlign: TextAlign.center,
+                  maxLength: 1,
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: CupertinoColors.systemGrey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  onChanged: (value) =>
+                      _onChanged(value, index), // Handle input change
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: CupertinoButton(
+            onPressed: () {
+              context.read<FirebaseAuthCubit>().verifyOTP(
+                    verificationId: widget.verificationId,
+                    otp: _collectOTP(),
+                  );
+            },
+            child: const Text('Verify'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _collectOTP() {
+    return _controllers.map((controller) => controller.text).join('');
+  }
+
+  void _onChanged(String value, int index) {
+    // Move focus to the next text field if the input is not empty
+    if (value.length == 1 && index < 5) {
+      FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+    } else if (value.isEmpty && index > 0) {
+      // Move focus to the previous text field if the input is cleared
+      FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+    }
+  }
+
+  @override
+  void dispose() {
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+}
+
+class _LoginWidget extends StatelessWidget {
+  const _LoginWidget({
+    required this.phoneNumberController,
+  });
+
+  final TextEditingController phoneNumberController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width - 100,
+          child: Center(
+            child: CupertinoTextField(
+              controller: phoneNumberController,
+              placeholder: 'Enter mobile number',
+              keyboardType: TextInputType.phone,
+              padding: const EdgeInsets.all(16),
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: Text('+91'),
+              ),
+              maxLength: 10,
+              textAlign: TextAlign.center,
+              maxLengthEnforcement: MaxLengthEnforcement.none,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: CupertinoButton(
+            onPressed: () {
+              context
+                  .read<FirebaseAuthCubit>()
+                  .loginWithPhone(phoneNumberController.text);
+            },
+            child: const Text('Login'),
+          ),
+        ),
+      ],
     );
   }
 }
