@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/cubit/firebase_auth.cubit.dart';
-import 'package:todo_app/widgets/todo_loader.dart';
 
-import '../cubit/auth_states.dart';
+import '../cubit/auth/auth_states.dart';
+import '../cubit/auth/firebase_auth.cubit.dart';
+import '../widgets/todo_loader.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -19,7 +19,10 @@ class LoginScreen extends StatelessWidget {
         child: BlocConsumer<FirebaseAuthCubit, AuthState>(
             listener: (context, state) {
           if (state is AuthSuccessState) {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacementNamed(
+              context,
+              state.doesUserExist ? '/home' : '/createAccount',
+            );
           }
           if (state is OtpFailureState) {
             ///TODO handle error
@@ -131,8 +134,8 @@ class _OtpInputWidgetState extends State<_OtpInputWidget> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: CupertinoButton(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: CupertinoButton.filled(
             onPressed: () {
               context.read<FirebaseAuthCubit>().verifyOTP(
                     verificationId: widget.verificationId,
@@ -203,8 +206,8 @@ class _LoginWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: CupertinoButton(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: CupertinoButton.filled(
             onPressed: () {
               context
                   .read<FirebaseAuthCubit>()

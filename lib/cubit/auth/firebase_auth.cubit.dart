@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,7 +15,8 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
       phoneNumber: '+91 $number',
       verificationCompleted: (PhoneAuthCredential credential) async {
         await _auth.signInWithCredential(credential);
-        emit(AuthSuccessState());
+        String uid = FirebaseAuth.instance.currentUser!.uid;
+        checkUserExists(uid);
       },
       verificationFailed: (FirebaseAuthException e) {
         emit(AuthFailureState(
@@ -37,9 +39,9 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
         smsCode: otp,
       );
       await _auth.signInWithCredential(credential);
-      emit(AuthSuccessState());
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      checkUserExists(uid);
     } catch (e) {
-      print('EXCEPTION $e');
       emit(OtpFailureState(failureMessage: 'Invalid OTP'));
     }
   }
@@ -51,5 +53,19 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
   void logout() async {
     await _auth.signOut();
     emit(AuthInitial()); // Return to phone input state after logout
+  }
+
+  Future<void> checkUserExists(String uid) async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final userDoc = await firestore.collection('user').doc(uid).get();
+      if (userDoc.exists) {
+        emit(AuthSuccessState(doesUserExist: true));
+      } else {
+        emit(AuthSuccessState(doesUserExist: false));
+      }
+    } catch (e) {
+      /// Handle error
+    }
   }
 }
