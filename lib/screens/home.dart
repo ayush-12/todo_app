@@ -47,7 +47,9 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: TodoCard(
                     todo: todos[index],
-                    onDelete: () {},
+                    onDelete: () {
+                      context.read<TodoCubit>().deleteTodo(todos[index].id);
+                    },
                     onEdit: () {},
                   ),
                 );

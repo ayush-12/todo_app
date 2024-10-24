@@ -26,13 +26,13 @@ class TodoCard extends StatelessWidget {
           BoxShadow(
             color: Colors.black12,
             blurRadius: 6.0,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),
       child: CupertinoListTile(
-        padding: EdgeInsets.symmetric(vertical: 12),
-        leading: _buildPriorityIcon(todo.priority),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        leading: PriorityIndicator(priority: todo.priority),
         leadingSize: 60,
         title: Text(
           todo.title,
@@ -47,6 +47,9 @@ class TodoCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                   color: CupertinoColors.systemGrey, fontSize: 16),
+            ),
+            const SizedBox(
+              height: 5,
             ),
             Text(
               todo.dueDate != null
@@ -78,28 +81,22 @@ class TodoCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildPriorityIcon(Priority priority) {
-    List<Color> colors = [
-      CupertinoColors.systemGreen, // Low
-      CupertinoColors.systemOrange, // Medium
-      CupertinoColors.systemRed, // High
-    ];
+class PriorityIndicator extends StatelessWidget {
+  PriorityIndicator({super.key, required this.priority});
 
-    int selectedIndex;
-    switch (priority) {
-      case Priority.high:
-        selectedIndex = 2;
-        break;
-      case Priority.medium:
-        selectedIndex = 1;
-        break;
-      case Priority.low:
-      default:
-        selectedIndex = 0;
-        break;
-    }
+  final Priority priority;
 
+  final List<Color> colors = [
+    CupertinoColors.systemGreen, // Low
+    CupertinoColors.systemOrange, // Medium
+    CupertinoColors.systemRed, // High
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    int selectedIndex = _selectedIndex();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -132,7 +129,23 @@ class TodoCard extends StatelessWidget {
     );
   }
 
-// Helper method to get the priority label as a string.
+  int _selectedIndex() {
+    int index;
+    switch (priority) {
+      case Priority.high:
+        index = 2;
+        break;
+      case Priority.medium:
+        index = 1;
+        break;
+      case Priority.low:
+      default:
+        index = 0;
+        break;
+    }
+    return index;
+  }
+
   String _getPriorityLabel(Priority priority) {
     switch (priority) {
       case Priority.high:
