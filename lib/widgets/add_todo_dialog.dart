@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_app/cubit/theme/theme.cubit.dart';
 import '../models/todo/todo_item.dart';
 
 class AddTodoDialog extends StatefulWidget {
@@ -47,11 +48,12 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
 
   // Method to pick a due date
   Future<void> _selectDueDate() async {
+    final colors = context.read<ThemeCubit>().colors;
     await showCupertinoModalPopup<DateTime>(
       context: context,
       builder: (_) => Container(
         height: 250,
-        color: Colors.white,
+        color: colors.backgroundColor,
         child: CupertinoDatePicker(
           mode: CupertinoDatePickerMode.dateAndTime,
           minimumDate: DateTime.now(),

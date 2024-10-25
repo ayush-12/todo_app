@@ -10,7 +10,10 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
 
   Future<void> loginWithPhone(String number) async {
     emit(AuthSendingOtpState());
-
+    if (number.isEmpty || number.length < 10) {
+      emit(AuthFailureState(failureMessage: 'Enter a valid number'));
+      emit(AuthInitial());
+    }
     await _auth.verifyPhoneNumber(
       phoneNumber: '+91 $number',
       verificationCompleted: (PhoneAuthCredential credential) async {

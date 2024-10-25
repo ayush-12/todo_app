@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/user/user_cubit.dart';
 import '../cubit/user/user_state.dart';
+import '../widgets/alert_dialog.dart';
 
 class CreateUserScreen extends StatefulWidget {
   const CreateUserScreen({super.key});
@@ -23,8 +23,10 @@ class _CreateUserPageState extends State<CreateUserScreen> {
         if (state is UserCreated) {
           Navigator.pushReplacementNamed(context, '/home');
         } else if (state is UserError) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
+          showCupertinoDialog(
+            context: context,
+            builder: (context) => ToDoAlertDialog(message: state.message),
+          );
         }
       },
       child: CupertinoPageScaffold(

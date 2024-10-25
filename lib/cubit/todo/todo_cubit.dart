@@ -24,7 +24,12 @@ class TodoCubit extends Cubit<TodoState> {
         Todo fetchedTodo = Todo.fromJson(doc.data() as Map<String, dynamic>);
         todoList.add(fetchedTodo);
       }
-
+      todoList.sort((a, b) {
+        if (a.dueDate == null && b.dueDate == null) return 0; // Both null
+        if (a.dueDate == null) return 1; // a goes after b
+        if (b.dueDate == null) return -1; // b goes after a
+        return a.dueDate!.compareTo(b.dueDate!);
+      });
       emit(LoadTodos(todos: todoList));
     } catch (e) {
       ///Todo handle error

@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/auth/auth_states.dart';
 import '../cubit/auth/firebase_auth.cubit.dart';
+import '../widgets/alert_dialog.dart';
 import '../widgets/todo_loader.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -25,10 +27,19 @@ class LoginScreen extends StatelessWidget {
             );
           }
           if (state is OtpFailureState) {
-            ///TODO handle error
-            ///
+            showCupertinoDialog(
+              context: context,
+              builder: (context) =>
+                  ToDoAlertDialog(message: state.failureMessage),
+            );
           }
-          if (state is AuthFailureState) {}
+          if (state is AuthFailureState) {
+            showCupertinoDialog(
+              context: context,
+              builder: (context) =>
+                  ToDoAlertDialog(message: state.failureMessage),
+            );
+          }
         }, buildWhen: (previous, current) {
           return current is AuthInitial ||
               current is OtpInputState ||
@@ -201,7 +212,6 @@ class _LoginWidget extends StatelessWidget {
               ),
               maxLength: 10,
               textAlign: TextAlign.center,
-              maxLengthEnforcement: MaxLengthEnforcement.none,
             ),
           ),
         ),
