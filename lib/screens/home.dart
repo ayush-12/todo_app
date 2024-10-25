@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubit/auth/firebase_auth.cubit.dart';
 import 'package:todo_app/cubit/home/home_cubit.dart';
@@ -92,41 +93,42 @@ class _HomeScreenState extends State<HomeScreen> {
             BlocBuilder<HomeCubit, HomeState>(
               builder: (context, state) {
                 if (state is DrawerState && state.shouldOpen) {
+                  final colors = context.read<ThemeCubit>().colors;
                   return GestureDetector(
                     onTap: _closeDrawer,
-                    child: Container(
-                      // Dark overlay
-                      child: Column(
-                        children: [
-                          Container(
-                            color: CupertinoColors.white,
-                            width: 250,
-                            child: Column(
-                              children: [
-                                CupertinoListTile(
-                                  title: const Text('Dark Mode'),
-                                  trailing: CupertinoSwitch(
-                                      value: false, onChanged: (value) {}),
-                                  onTap: () {
-                                    _closeDrawer();
-
-                                    context.read<ThemeCubit>().toggleTheme();
-                                  },
-                                ),
-                                CupertinoListTile(
-                                  title: const Text('Logout'),
-                                  onTap: () {
-                                    context.read<FirebaseAuthCubit>().logout();
-                                    _closeDrawer();
-                                    Navigator.pushReplacementNamed(
-                                        context, '/');
-                                  },
-                                ),
-                              ],
-                            ),
+                    child: Column(
+                      children: [
+                        Container(
+                          color: colors.backgroundColor,
+                          width: 250,
+                          child: Column(
+                            children: [
+                              CupertinoListTile(
+                                padding: const EdgeInsets.all(12),
+                                title: const Text('Dark Mode'),
+                                trailing: CupertinoSwitch(
+                                    value: context.watch<ThemeCubit>().state ==
+                                        Brightness.dark,
+                                    onChanged: (value) {}),
+                                onTap: () {
+                                  _closeDrawer();
+                                  context.read<ThemeCubit>().toggleTheme();
+                                },
+                              ),
+                              Divider(),
+                              CupertinoListTile(
+                                padding: const EdgeInsets.all(12),
+                                title: const Text('Logout'),
+                                onTap: () {
+                                  context.read<FirebaseAuthCubit>().logout();
+                                  _closeDrawer();
+                                  Navigator.pushReplacementNamed(context, '/');
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 }

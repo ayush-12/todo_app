@@ -28,11 +28,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => ThemeCubit())
       ],
-      child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (context, theme) {
+      child:
+          BlocBuilder<ThemeCubit, Brightness>(builder: (context, brightness) {
         return CupertinoApp(
           theme: CupertinoThemeData(
-            brightness:
-                theme == ThemeMode.dark ? Brightness.dark : Brightness.light,
+            brightness: brightness,
           ),
           initialRoute: '/',
           routes: appRoutes,

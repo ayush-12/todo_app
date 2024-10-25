@@ -68,17 +68,15 @@ class TodoCubit extends Cubit<TodoState> {
   Future<void> updateTodo(Todo updatedTodo) async {
     try {
       String uid = FirebaseAuth.instance.currentUser!.uid;
-      print('UPDATE TODO ${updatedTodo.toJson()}');
       await FirebaseFirestore.instance
           .collection('user')
           .doc(uid)
           .collection('todos')
           .doc(updatedTodo.id)
           .update(updatedTodo.toJson());
-      print('UPDATE TODO done');
+
       fetchTodos(); // Refresh the list after updating the todo
     } catch (e) {
-      print('UPDATE TODO FAILED $e');
       // TODO: Handle the error (e.g., show an error message)
     }
   }
