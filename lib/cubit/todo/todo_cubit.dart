@@ -13,6 +13,7 @@ class TodoCubit extends Cubit<TodoState> {
   Future<void> fetchTodos() async {
     try {
       String uid = FirebaseAuth.instance.currentUser!.uid;
+
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('user')
           .doc(uid)
@@ -107,5 +108,9 @@ class TodoCubit extends Cubit<TodoState> {
           .delete();
       // TODO: Handle the error (e.g., show an error message)
     }
+  }
+
+  void clearTodoOnLogout() {
+    emit(LoadTodos(todos: []));
   }
 }

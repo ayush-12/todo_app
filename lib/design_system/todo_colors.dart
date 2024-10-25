@@ -17,7 +17,7 @@ class TodoColors {
   static const light = TodoColors(
     backgroundColor: CupertinoColors.extraLightBackgroundGray,
     textColor: CupertinoColors.black,
-    cardBackgroundColor: CupertinoColors.lightBackgroundGray,
+    cardBackgroundColor: CupertinoColors.extraLightBackgroundGray,
   );
 
   // Dark theme color palette

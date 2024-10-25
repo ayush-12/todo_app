@@ -22,6 +22,12 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isDrawerOpen = false;
 
   @override
+  void initState() {
+    super.initState();
+    context.read<TodoCubit>().fetchTodos();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -60,34 +66,40 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 final todos = (state as LoadTodos).todos;
-                return ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: todos.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: TodoCard(
-                        todo: todos[index],
-                        onDelete: () {
-                          context.read<TodoCubit>().deleteTodo(todos[index].id);
-                        },
-                        onEdit: () {
-                          showCupertinoModalPopup(
-                            context: context,
-                            builder: (context) => AddTodoDialog(
-                              initialTodo: todos[index],
-                              onAdd: (updatedTodo) {
+                return todos.isEmpty
+                    ? const Center(
+                        child: Text('No Todo\'s Yet!!'),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: todos.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: TodoCard(
+                              todo: todos[index],
+                              onDelete: () {
                                 context
                                     .read<TodoCubit>()
-                                    .updateTodo(updatedTodo);
+                                    .deleteTodo(todos[index].id);
+                              },
+                              onEdit: () {
+                                showCupertinoModalPopup(
+                                  context: context,
+                                  builder: (context) => AddTodoDialog(
+                                    initialTodo: todos[index],
+                                    onAdd: (updatedTodo) {
+                                      context
+                                          .read<TodoCubit>()
+                                          .updateTodo(updatedTodo);
+                                    },
+                                  ),
+                                );
                               },
                             ),
                           );
                         },
-                      ),
-                    );
-                  },
-                );
+                      );
               },
             ),
             BlocBuilder<HomeCubit, HomeState>(
@@ -115,11 +127,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context.read<ThemeCubit>().toggleTheme();
                                 },
                               ),
-                              Divider(),
+                              const Divider(),
                               CupertinoListTile(
                                 padding: const EdgeInsets.all(12),
                                 title: const Text('Logout'),
                                 onTap: () {
+                                  context.read<TodoCubit>().clearTodoOnLogout();
                                   context.read<FirebaseAuthCubit>().logout();
                                   _closeDrawer();
                                   Navigator.pushReplacementNamed(context, '/');
