@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/screens/home.dart';
-import 'package:todo_app/screens/user_creation.dart';
 
+import 'screens/home.dart';
 import 'screens/login.dart';
+import 'screens/user_creation.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
-  '/': (context) => LoginScreen(),
+  '/': (context) => const LoginScreen(),
   '/createAccount': (context) => const CreateUserScreen(),
-  '/home': (context) => HomeScreen()
+  '/home': (context) => const HomeScreen()
 };

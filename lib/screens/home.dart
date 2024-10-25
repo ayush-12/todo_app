@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/cubit/auth/firebase_auth.cubit.dart';
-import 'package:todo_app/cubit/home/home_cubit.dart';
-import 'package:todo_app/cubit/home/home_states.dart';
-import 'package:todo_app/cubit/theme/theme.cubit.dart';
-import 'package:todo_app/cubit/todo/todo_cubit.dart';
-import 'package:todo_app/cubit/todo/todo_states.dart';
-import 'package:todo_app/widgets/add_todo_dialog.dart';
-import 'package:todo_app/widgets/todo_card.dart';
-import 'package:todo_app/widgets/todo_loader.dart';
+
+import '../cubit/auth/firebase_auth.cubit.dart';
+import '../cubit/home/home_cubit.dart';
+import '../cubit/home/home_states.dart';
+import '../cubit/todo/todo_cubit.dart';
+import '../cubit/todo/todo_states.dart';
+import '../theme/theme.cubit.dart';
+import '../widgets/add_todo_dialog.dart';
+import '../widgets/todo_card.dart';
+import '../widgets/todo_loader.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

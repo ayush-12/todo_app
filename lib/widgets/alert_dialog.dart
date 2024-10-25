@@ -10,11 +10,11 @@ class ToDoAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoActionSheet(
-      title: Text('Alert'),
+      title: const Text('Alert'),
       message: Text(message),
       actions: [
         CupertinoActionSheetAction(
-          child: Text('OK'),
+          child: const Text('OK'),
           onPressed: () {
             Navigator.pop(context);
           },

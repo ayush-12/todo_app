@@ -2,12 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubit/auth/firebase_auth.cubit.dart';
-import 'package:todo_app/cubit/home/home_cubit.dart';
-import 'package:todo_app/cubit/theme/theme.cubit.dart';
-import 'package:todo_app/cubit/todo/todo_cubit.dart';
 
+import 'cubit/home/home_cubit.dart';
+import 'cubit/todo/todo_cubit.dart';
 import 'cubit/user/user_cubit.dart';
 import 'routes.dart';
+import 'theme/theme.cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

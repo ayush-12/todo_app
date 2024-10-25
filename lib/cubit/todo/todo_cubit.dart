@@ -49,7 +49,7 @@ class TodoCubit extends Cubit<TodoState> {
 
       await updateTodoId(docRef.id);
 
-      fetchTodos(); // Refresh the list after adding a new todo
+      fetchTodos();
     } catch (e) {
       ///TODO hadnle error
     }
@@ -65,7 +65,7 @@ class TodoCubit extends Cubit<TodoState> {
           .doc(todoId)
           .delete();
 
-      fetchTodos(); // Refresh the list after deleting a todo
+      fetchTodos();
     } catch (e) {
       // TODO: Handle the error (e.g., show an error message)
     }
@@ -81,7 +81,7 @@ class TodoCubit extends Cubit<TodoState> {
           .doc(updatedTodo.id)
           .update(updatedTodo.toJson());
 
-      fetchTodos(); // Refresh the list after updating the todo
+      fetchTodos();
     } catch (e) {
       // TODO: Handle the error (e.g., show an error message)
     }
