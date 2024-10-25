@@ -77,4 +77,17 @@ class FirebaseAuthCubit extends Cubit<AuthState> {
       /// Handle error
     }
   }
+
+  Future<void> checkIfUserLoggedIn() async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        checkUserExists(user.uid);
+      } else {
+        // No user is signed in, stay in login.
+      }
+    } catch (e) {
+      /// Handle error
+    }
+  }
 }

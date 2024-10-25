@@ -1,6 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/auth/auth_states.dart';
@@ -8,10 +6,21 @@ import '../cubit/auth/firebase_auth.cubit.dart';
 import '../widgets/alert_dialog.dart';
 import '../widgets/todo_loader.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController phoneNumberController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<FirebaseAuthCubit>().checkIfUserLoggedIn();
+  }
 
   @override
   Widget build(BuildContext context) {
